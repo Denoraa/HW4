@@ -79,8 +79,7 @@ public class PillarsManager : MonoSingleton<PillarsManager>
     
     private void ScoreGet()
     {
-
-
+        AudioManager.Instance.PlaySFX(false);
         OnScoreingNotify?.Invoke();
         UpdateScoreUINotify?.Invoke();
 

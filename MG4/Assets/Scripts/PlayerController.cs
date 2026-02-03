@@ -27,7 +27,6 @@ public class PlayerController : MonoSingleton<PlayerController>
         _rb = GetComponent<Rigidbody2D>();
 
         _rb.simulated = false;
-
         Reset_position = this.transform.position;
     }
 
@@ -61,7 +60,7 @@ public class PlayerController : MonoSingleton<PlayerController>
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-
+            AudioManager.Instance.PlaySFX(true);
             _rb.velocity = new Vector2(0, _jumpForce);
             jNotify?.Invoke("JumpAnim");
 
@@ -86,13 +85,13 @@ public class PlayerController : MonoSingleton<PlayerController>
                 gameOver?.Invoke();
         }
     }
-    public Transform playerTransform
+    public Rigidbody2D playerRb
     {
 
         get
         {
 
-            return _rb.transform;
+            return _rb;
 
         }
 

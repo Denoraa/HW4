@@ -46,6 +46,7 @@ public class UIManager : MonoBehaviour {
     private void ClickOnStart()
     {
         GameManager.Instance._gameState = GameState.GameON;
+        PlayerController.Instance.playerRb.velocity = Vector2.zero;
         StartButtonNofity?.Invoke();
         TitleText.SetActive(false);
         StartButton.SetActive(false);

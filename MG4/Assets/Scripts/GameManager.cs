@@ -1,23 +1,20 @@
 ﻿using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
+using static GameManager;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoSingleton<GameManager>
 {
 
-    //Imports
-
-
-    //Usual Variables
     private int _Score;
-    //public HighScoreData _ScoreData;
+    public HighScoreData _ScoreData;
 
-    //Unique Variables
     public delegate void GameOver();
     public event GameOver gameOverNotify;
-    public static GameManager instance;
-    private GameState _gameState = GameState.None;
+
+    public delegate void GameRestart();
+    public event GameRestart onGameRestart;
+
+    public GameState _gameState = GameState.None;
 
 
 
@@ -31,23 +28,10 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void Awake()
-    {
-
-        if (instance == null)
-        {
-            instance = this;
-
-        }
-
-    }
-
     private void Start()
     {
-        //PillarsManager.instance.OnScoreingNotify += Scoreing;
-        //UIManager.instance.StartButtonNofity += GameStart;
-        //PlayerController.instance.gameOver += GameEnd;
-
+        PillarsManager.Instance.OnScoreingNotify += Scoreing;
+        PlayerController.Instance.gameOver += GameEnd;
     }
 
     private void Update()
@@ -63,10 +47,8 @@ public class GameManager : MonoBehaviour
 
     private void OnDisable()
     {
-        //PillarsManager.instance.OnScoreingNotify -= Scoreing;
-        //UIManager.instance.StartButtonNofity -= GameStart;
-        //PlayerController.instance.gameOver -= GameEnd;
-
+        PillarsManager.Instance.OnScoreingNotify -= Scoreing;
+        PlayerController.Instance.gameOver -= GameEnd;
     }
     private void GameStart()
     {
@@ -91,7 +73,9 @@ public class GameManager : MonoBehaviour
         if (Input.anyKeyDown&&_gameState==GameState.GameOff)
         {
             Time.timeScale = 1;
-            SceneManager.LoadScene("MainScene");
+            _gameState=GameState.None;
+            onGameRestart?.Invoke();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
         }
 
@@ -101,22 +85,17 @@ public class GameManager : MonoBehaviour
     {
 
         _Score++;
-        Debug.Log(_Score);
-
 
     }
     private void UpdateHighScore()
     {
 
-        //if (_Score > _ScoreData.HighScore)
-        //{
+        if (_Score > _ScoreData.HighScore)
+        {
 
-        //    _ScoreData.HighScore = _Score;
+            _ScoreData.HighScore = _Score;
 
-        //}
-
-
-
+        }
     }
 
     public GameState CurrentGameState
